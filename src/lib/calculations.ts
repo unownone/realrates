@@ -180,6 +180,9 @@ export function calculateTotalCost(inputs: CalculatorInputs): LoanCalculation {
   // Calculate cost breakdown
   const breakdown = calculateCostBreakdown(principal, totalInterest, processingFees, totalGST);
   
+  // Calculate APR
+  const apr = calculateAPR(principal, totalAmount, loanTerm);
+  
   // Handle No-Cost EMI
   let noCostEMIData = undefined;
   let finalEMI = originalEMI;
@@ -187,6 +190,7 @@ export function calculateTotalCost(inputs: CalculatorInputs): LoanCalculation {
   let finalTotalAmount = totalAmount;
   let finalBreakdown = breakdown;
   let finalMonthlySchedule = monthlySchedule;
+  let finalAPR = apr;
   
   if (noCostEMI) {
     // No-Cost EMI means 100% interest discount
@@ -227,6 +231,10 @@ export function calculateTotalCost(inputs: CalculatorInputs): LoanCalculation {
     // Calculate new cost breakdown for No-Cost EMI
     const noCostBreakdown = calculateCostBreakdown(principal, 0, processingFees, calculateGST(processingFees));
     
+    // Calculate APR for No-Cost EMI (only fees and GST)
+    const noCostTotalAmount = principal + processingFees + calculateGST(processingFees);
+    const noCostAPR = calculateAPR(principal, noCostTotalAmount, loanTerm);
+    
     noCostEMIData = {
       originalEMI,
       discountedEMI,
@@ -236,9 +244,10 @@ export function calculateTotalCost(inputs: CalculatorInputs): LoanCalculation {
     
     finalEMI = discountedEMI;
     finalTotalInterest = 0;
-    finalTotalAmount = principal + processingFees + calculateGST(processingFees);
+    finalTotalAmount = noCostTotalAmount;
     finalBreakdown = noCostBreakdown;
     finalMonthlySchedule = noCostSchedule;
+    finalAPR = noCostAPR;
   }
   
   return {
@@ -247,10 +256,27 @@ export function calculateTotalCost(inputs: CalculatorInputs): LoanCalculation {
     totalFees: processingFees,
     totalGST: noCostEMI ? calculateGST(processingFees) : totalGST,
     totalAmount: finalTotalAmount,
+    apr: finalAPR,
     monthlySchedule: finalMonthlySchedule,
     breakdown: finalBreakdown,
     noCostEMI: noCostEMIData
   };
+}
+
+/**
+ * Calculate APR (Annual Percentage Rate) including all costs
+ * APR represents the true cost of borrowing including interest, fees, and GST
+ */
+export function calculateAPR(principal: number, totalAmount: number, termMonths: number): number {
+  if (principal === 0 || termMonths === 0) return 0;
+  
+  // Total cost of borrowing (excluding principal)
+  const totalCost = totalAmount - principal;
+  
+  // Convert to annual rate
+  const annualRate = (totalCost / principal) * (12 / termMonths) * 100;
+  
+  return Math.round(annualRate * 100) / 100; // Round to 2 decimal places
 }
 
 /**

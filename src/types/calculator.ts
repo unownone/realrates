@@ -15,6 +15,7 @@ export interface LoanCalculation {
   totalFees: number;
   totalGST: number;
   totalAmount: number;
+  apr: number; // Annual Percentage Rate including all costs
   monthlySchedule: MonthlyPayment[];
   breakdown: CostBreakdown;
   noCostEMI?: {

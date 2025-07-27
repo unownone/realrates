@@ -63,17 +63,16 @@ export function ResultsSection({
   const principal = calculation.breakdown.principal;
 
   return (
-    <div className={cn('space-y-4 sm:space-y-6 overflow-hidden', className)}>
-      <MonthlyEMIDisplay 
+    <div className={cn("space-y-4 sm:space-y-6 overflow-hidden", className)}>
+      <MonthlyEMIDisplay
         emi={calculation.emi}
         loanTerm={calculation.monthlySchedule.length}
+        apr={calculation.apr}
         animated={true}
       />
-      
-      <CostBreakdown 
-        breakdown={calculation.breakdown}
-      />
-      
+
+      <CostBreakdown breakdown={calculation.breakdown} />
+
       {calculation.noCostEMI && (
         <div className="p-4 sm:p-6 status-success rounded-lg overflow-hidden">
           <h4 className="font-medium text-success-text mb-2 sm:mb-3 flex items-center text-sm sm:text-base">
@@ -81,32 +80,78 @@ export function ResultsSection({
             No-Cost EMI Savings
           </h4>
           <div className="space-y-1 text-xs sm:text-sm text-success-text">
-            <div className="break-words">• Original EMI: ₹{calculation.noCostEMI.originalEMI.toLocaleString('en-IN')}</div>
-            <div className="break-words">• Discounted EMI: ₹{calculation.noCostEMI.discountedEMI.toLocaleString('en-IN')}</div>
-            <div className="break-words">• Monthly Savings: ₹{(calculation.noCostEMI.originalEMI - calculation.noCostEMI.discountedEMI).toLocaleString('en-IN')}</div>
-            <div className="break-words">• Total Interest Savings: ₹{calculation.noCostEMI.totalSavings.toLocaleString('en-IN')}</div>
-            <div className="break-words">• Effective Interest Rate: {calculation.noCostEMI.effectiveInterestRate.toFixed(2)}%</div>
+            <div className="break-words">
+              • Original EMI: ₹
+              {calculation.noCostEMI.originalEMI.toLocaleString("en-IN")}
+            </div>
+            <div className="break-words">
+              • Discounted EMI: ₹
+              {calculation.noCostEMI.discountedEMI.toLocaleString("en-IN")}
+            </div>
+            <div className="break-words">
+              • Monthly Savings: ₹
+              {(
+                calculation.noCostEMI.originalEMI -
+                calculation.noCostEMI.discountedEMI
+              ).toLocaleString("en-IN")}
+            </div>
+            <div className="break-words">
+              • Total Interest Savings: ₹
+              {calculation.noCostEMI.totalSavings.toLocaleString("en-IN")}
+            </div>
+            <div className="break-words">
+              • Effective Interest Rate:{" "}
+              {calculation.noCostEMI.effectiveInterestRate.toFixed(2)}%
+            </div>
+            <div className="break-words">
+              • Effective APR (including fees & GST):{" "}
+              {calculation.apr.toFixed(2)}%
+            </div>
           </div>
         </div>
       )}
-      
+
       <div className="p-4 sm:p-6 status-info rounded-lg overflow-hidden">
-        <h4 className="font-medium text-info-text mb-2 sm:mb-3 text-sm sm:text-base">Summary</h4>
+        <h4 className="font-medium text-info-text mb-2 sm:mb-3 text-sm sm:text-base">
+          Summary
+        </h4>
         <div className="space-y-1 text-xs sm:text-sm text-info-text">
-          <div className="break-words">• Total Interest: ₹{calculation.totalInterest.toLocaleString('en-IN')}</div>
-          <div className="break-words">• Processing Fees: ₹{calculation.totalFees.toLocaleString('en-IN')}</div>
-          <div className="break-words">• GST: ₹{calculation.totalGST.toLocaleString('en-IN')}</div>
-          <div className="break-words">• Total Cost: ₹{totalCost.toLocaleString('en-IN')}</div>
-          <div className="break-words">• Total Amount: ₹{calculation.totalAmount.toLocaleString('en-IN')}</div>
+          <div className="break-words">
+            • Total Interest: ₹
+            {calculation.totalInterest.toLocaleString("en-IN")}
+          </div>
+          <div className="break-words">
+            • Processing Fees: ₹{calculation.totalFees.toLocaleString("en-IN")}
+          </div>
+          <div className="break-words">
+            • GST: ₹{calculation.totalGST.toLocaleString("en-IN")}
+          </div>
+          <div className="break-words">
+            • Total Cost: ₹{totalCost.toLocaleString("en-IN")}
+          </div>
+          <div className="break-words">
+            • Total Amount: ₹{calculation.totalAmount.toLocaleString("en-IN")}
+          </div>
+          <div className="break-words font-medium">
+            • APR (including all costs): {calculation.apr.toFixed(2)}%
+          </div>
         </div>
       </div>
-      
+
       <div className="p-4 sm:p-6 bg-gradient-to-r from-error-secondary to-warning-secondary border border-error-primary rounded-lg overflow-hidden">
-        <h4 className="font-medium text-error-text mb-2 sm:mb-3 text-sm sm:text-base">Total Cost Over Principal</h4>
+        <h4 className="font-medium text-error-text mb-2 sm:mb-3 text-sm sm:text-base">
+          Total Cost Over Principal
+        </h4>
         <div className="space-y-1 text-xs sm:text-sm text-error-text">
-          <div className="break-words">• Principal Amount: ₹{principal.toLocaleString('en-IN')}</div>
-          <div className="break-words">• Additional Costs: ₹{(totalCost).toLocaleString('en-IN')}</div>
-          <div className="break-words">• Cost Ratio: {((totalCost / principal) * 100).toFixed(1)}%</div>
+          <div className="break-words">
+            • Principal Amount: ₹{principal.toLocaleString("en-IN")}
+          </div>
+          <div className="break-words">
+            • Additional Costs: ₹{totalCost.toLocaleString("en-IN")}
+          </div>
+          <div className="break-words">
+            • Cost Ratio: {((totalCost / principal) * 100).toFixed(1)}%
+          </div>
         </div>
       </div>
     </div>
